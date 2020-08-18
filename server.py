@@ -27,25 +27,25 @@ departments = {
 
 @app.route( '/' )
 def home():
-    lpath = pathlib.Path().absolute()
+    lpath = config[ 'mysqlDB' ][ 'path' ].replace("'", "")
 
-    filecontent = open( path.join( lpath, 'static/fechas.json') )
+    filecontent = open( lpath + 'static/fechas.json' )
     fechajson = filecontent.readline()
     filecontent.close()
 
-    filecontent = open( path.join( lpath, 'static/confirmed.json') )
+    filecontent = open( lpath + 'static/confirmed.json' )
     confirmed_json = json.loads( filecontent.readline() )
     filecontent.close()
 
-    filecontent = open( path.join( lpath, 'static/death.json') )
+    filecontent = open( lpath + 'static/death.json' )
     death_json = json.loads( filecontent.readline() )
     filecontent.close()
 
-    filecontent = open( path.join( lpath,'static/recovered.json') )
+    filecontent = open( lpath + 'static/recovered.json' )
     recovered_json = json.loads( filecontent.readline() )
     filecontent.close()
 
-    filecontent = open( path.join( lpath,'static/discarted.json') )
+    filecontent = open( lpath + 'static/discarted.json' )
     discarted_json = json.loads( filecontent.readline() )
     filecontent.close()
 
@@ -73,20 +73,24 @@ def get_today_data():
 def save_api_data(res):
     fecha = res['fecha']
     fechaObj = datetime.datetime.strptime( res['fecha'], '%d/%m/%y %H:%M' )
-    lpath = pathlib.Path().absolute()
+    lpath = config[ 'mysqlDB' ][ 'path' ].replace("'","")
+    host = config[ 'mysqlDB' ][ 'host' ].replace("'","")
+    user = config[ 'mysqlDB' ][ 'user' ].replace("'","")
+    passw = config[ 'mysqlDB' ][ 'pass' ].replace("'","")
+    db = config[ 'mysqlDB' ][ 'db' ].replace("'","")
     
     # connect to db
-    conn = pymysql.connect( host=config[ 'mysqlDB' ][ 'host' ],
-                            user=config[ 'mysqlDB' ][ 'user' ],
-                            password=config[ 'mysqlDB' ][ 'pass' ],
-                            db=config[ 'mysqlDB' ][ 'db' ],
+    conn = pymysql.connect( host=host,
+                            user=user,
+                            password=passw,
+                            db=db,
                             charset="utf8",
                             cursorclass=pymysql.cursors.DictCursor 
                             )
     
     try:
         with conn.cursor() as cursor:
-            for item in departments.keys:
+            for item in departments.keys():
                 contdata = res['departamento'][item]['contador']
 
                 # Create a new record
@@ -109,7 +113,7 @@ def save_api_data(res):
                 if not firstDate:
                     firstDate = item['date'].strftime('%Y-%m-%d')
 
-            with open( path.join( lpath,'static/fechas.json'), 'w' ) as jsonfile:
+            with open( (lpath + 'static/fechas.json'), 'w' ) as jsonfile:
                 json.dump( fechaJson, jsonfile )
 
             sql = f"SELECT * FROM cov_data_per_day WHERE `date` >= '{firstDate}'  ORDER BY `date` ASC"
@@ -121,7 +125,7 @@ def save_api_data(res):
             data_json_suspects = {}
             data_json_discarted = {}
 
-            for dep in departments.keys:
+            for dep in departments.keys():
                 data_json_confirmed[ dep ] = []
                 data_json_death[ dep ] = []
                 data_json_recovered[ dep ] = []
@@ -136,19 +140,19 @@ def save_api_data(res):
                         data_json_suspects[ dep ].append( item['suspects'] )
                         data_json_discarted[ dep ].append( item['discarded'] )
 
-            with open( path.join( lpath,'static/confirmed.json'), 'w' ) as jsonfile:
+            with open( lpath + 'static/confirmed.json', 'w' ) as jsonfile:
                 json.dump( data_json_confirmed, jsonfile )
 
-            with open( path.join( lpath,'static/death.json'), 'w' ) as jsonfile:
+            with open( lpath + 'static/death.json', 'w' ) as jsonfile:
                 json.dump( data_json_death, jsonfile )
 
-            with open( path.join( lpath,'static/recovered.json'), 'w' ) as jsonfile:
+            with open( lpath + 'static/recovered.json', 'w' ) as jsonfile:
                 json.dump( data_json_recovered, jsonfile )
 
-            with open( path.join( lpath,'static/suspects.json'), 'w' ) as jsonfile:
+            with open( lpath + 'static/suspects.json', 'w' ) as jsonfile:
                 json.dump( data_json_suspects, jsonfile )
 
-            with open( path.join( lpath,'static/discarted.json'), 'w' ) as jsonfile:
+            with open( lpath + 'static/discarted.json', 'w' ) as jsonfile:
                 json.dump( data_json_discarted, jsonfile )
     finally:
         conn.close()
