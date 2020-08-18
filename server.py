@@ -26,21 +26,21 @@ departments = {
 
 @app.route( '/' )
 def home():
-    filecontent = open( 'static/fechas.json' )
+    filecontent = open( 'json_data/fechas.json' )
     fechajson = filecontent.readline()
     filecontent.close()
 
-    filecontent = open( 'static/confirmed.json' )
-    confirmed_json = json.loads( filecontent.readline() )
-    filecontent.close()
+#    filecontent = open( 'static/confirmed.json' )
+#    confirmed_json = json.loads( filecontent.readline() )
+#    filecontent.close()
 
-    filecontent = open( 'static/death.json' )
-    death_json = json.loads( filecontent.readline() )
-    filecontent.close()
+#    filecontent = open( 'static/death.json' )
+#    death_json = json.loads( filecontent.readline() )
+#    filecontent.close()
 
-    filecontent = open( 'static/recovered.json' )
-    recovered_json = json.loads( filecontent.readline() )
-    filecontent.close()
+#    filecontent = open( 'static/recovered.json' )
+#    recovered_json = json.loads( filecontent.readline() )
+#    filecontent.close()
 
     return render_template( 'index.html', fechajson=fechajson, confirmed=confirmed_json, death=death_json, recovered=recovered_json, departments=departments )
 
