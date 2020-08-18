@@ -1,10 +1,11 @@
-import os
+from os import path, listdir, mkdir
 import requests
 from flask import Flask, render_template
 import pymysql.cursors
 import datetime
 import json
 import configparser
+import pathlib
 
 app = Flask(__name__)
 
@@ -26,23 +27,36 @@ departments = {
 
 @app.route( '/' )
 def home():
-    filecontent = open( 'json_data/fechas.json' )
+    lpath = pathlib.Path().absolute()
+
+    filecontent = open( path.join( lpath, 'static/fechas.json') )
     fechajson = filecontent.readline()
     filecontent.close()
 
-#    filecontent = open( 'static/confirmed.json' )
-#    confirmed_json = json.loads( filecontent.readline() )
-#    filecontent.close()
+    filecontent = open( path.join( lpath, 'static/confirmed.json') )
+    confirmed_json = json.loads( filecontent.readline() )
+    filecontent.close()
 
-#    filecontent = open( 'static/death.json' )
-#    death_json = json.loads( filecontent.readline() )
-#    filecontent.close()
+    filecontent = open( path.join( lpath, 'static/death.json') )
+    death_json = json.loads( filecontent.readline() )
+    filecontent.close()
 
-#    filecontent = open( 'static/recovered.json' )
-#    recovered_json = json.loads( filecontent.readline() )
-#    filecontent.close()
+    filecontent = open( path.join( lpath,'static/recovered.json') )
+    recovered_json = json.loads( filecontent.readline() )
+    filecontent.close()
 
-    return render_template( 'index.html', fechajson=fechajson, confirmed=confirmed_json, death=death_json, recovered=recovered_json, departments=departments )
+    filecontent = open( path.join( lpath,'static/discarted.json') )
+    discarted_json = json.loads( filecontent.readline() )
+    filecontent.close()
+
+    return render_template( 'index.html', 
+                            fechajson=fechajson, 
+                            confirmed=confirmed_json, 
+                            death=death_json, 
+                            recovered=recovered_json, 
+                            discarted=discarted_json, 
+                            departments=departments 
+                        )
 
 @app.route( '/save_data20200815' )
 def save_data():
@@ -59,6 +73,7 @@ def get_today_data():
 def save_api_data(res):
     fecha = res['fecha']
     fechaObj = datetime.datetime.strptime( res['fecha'], '%d/%m/%y %H:%M' )
+    lpath = pathlib.Path().absolute()
     
     # connect to db
     conn = pymysql.connect( host=config[ 'mysqlDB' ][ 'host' ],
@@ -94,7 +109,7 @@ def save_api_data(res):
                 if not firstDate:
                     firstDate = item['date'].strftime('%Y-%m-%d')
 
-            with open( 'static/fechas.json', 'w' ) as jsonfile:
+            with open( path.join( lpath,'static/fechas.json'), 'w' ) as jsonfile:
                 json.dump( fechaJson, jsonfile )
 
             sql = f"SELECT * FROM cov_data_per_day WHERE `date` >= '{firstDate}'  ORDER BY `date` ASC"
@@ -121,19 +136,19 @@ def save_api_data(res):
                         data_json_suspects[ dep ].append( item['suspects'] )
                         data_json_discarted[ dep ].append( item['discarded'] )
 
-            with open( 'static/confirmed.json', 'w' ) as jsonfile:
+            with open( path.join( lpath,'static/confirmed.json'), 'w' ) as jsonfile:
                 json.dump( data_json_confirmed, jsonfile )
 
-            with open( 'static/death.json', 'w' ) as jsonfile:
+            with open( path.join( lpath,'static/death.json'), 'w' ) as jsonfile:
                 json.dump( data_json_death, jsonfile )
 
-            with open( 'static/recovered.json', 'w' ) as jsonfile:
+            with open( path.join( lpath,'static/recovered.json'), 'w' ) as jsonfile:
                 json.dump( data_json_recovered, jsonfile )
 
-            with open( 'static/suspects.json', 'w' ) as jsonfile:
+            with open( path.join( lpath,'static/suspects.json'), 'w' ) as jsonfile:
                 json.dump( data_json_suspects, jsonfile )
 
-            with open( 'static/discarted.json', 'w' ) as jsonfile:
+            with open( path.join( lpath,'static/discarted.json'), 'w' ) as jsonfile:
                 json.dump( data_json_discarted, jsonfile )
     finally:
         conn.close()

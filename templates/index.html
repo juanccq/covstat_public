@@ -354,7 +354,7 @@
         {% for key,item in departments.items() %}
           {
             name: '{{ item }}',
-            data: {{ recovered[ key ]|safe }}
+            data: {{ discarted[ key ]|safe }}
           },  
         {% endfor %}
       ],
