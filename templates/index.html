@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width,initial-scale=1" name="viewport">
+  <meta content="description" name="description">
+  <meta name="google" content="notranslate" />
+  <meta content="Datos de casos de coronavirus en Bolivia" name="author">
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/assets/apple-icon-180x180.png">
+  <link href="/static/assets/favicon.ico" rel="icon">
+
+  <title>Bolivia: "Coronavirus" datos diarios por departamento</title>  
+
+  <link href="/static/main.3f6952e4.css" rel="stylesheet">
+
+  <style type="text/css">
+    .highcharts-figure, .highcharts-data-table table {
+        min-width: 360px; 
+        max-width: 1300px;
+        margin: 1em auto;
+    }
+    
+    .highcharts-data-table table {
+      font-family: Verdana, sans-serif;
+      border-collapse: collapse;
+      border: 1px solid #EBEBEB;
+      margin: 10px auto;
+      text-align: center;
+      width: 100%;
+      max-width: 1000px;
+    }
+    .highcharts-data-table caption {
+        padding: 1em 0;
+        font-size: 1.2em;
+        color: #555;
+    }
+    .highcharts-data-table th {
+      font-weight: 600;
+        padding: 0.5em;
+    }
+    .highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+        padding: 0.5em;
+    }
+    .highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+        background: #f8f8f8;
+    }
+    .highcharts-data-table tr:hover {
+        background: #f1f7ff;
+    }
+    
+  </style>
+</head>
+
+<body class="minimal">
+  <script src="/static/highcharts.js"></script>
+  <script src="/static/series-label.js"></script>
+  <script src="/static/accessibility.js"></script>
+<div id="site-border-left"></div>
+<div id="site-border-right"></div>
+<div id="site-border-top"></div>
+<div id="site-border-bottom"></div>
+<!-- Add your content of header -->
+<header>
+  <nav class="navbar  navbar-fixed-top navbar-inverse">
+    <div class="container">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+        </button>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <ul class="nav navbar-nav ">
+          <li><a href="{{ url_for( 'home' ) }}" title="">01 : Home</a></li>
+          <li><a href="{{ url_for( 'home' ) }}" title="">02 : About</a></li>
+        </ul>
+      </div> 
+    </div>
+  </nav>
+</header>
+  <!-- Nuevos casos -->
+  <div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <figure class="highcharts-figure">
+            <div id="container"></div>
+            <p class="highcharts-description">
+                Datos de nuevos casos de <code>Coronavirus</code> por departamento. Las cantidades indican el número diario no el acumulado.<br />
+                El cuadro muestra los últimos 20 días<br />
+                Puede hacer clic en los departamento para un mejor filtrado.
+            </p>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decesos -->
+  <div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <figure class="highcharts-figure">
+            <div id="container_deaths"></div>
+            <p class="highcharts-description">
+                Datos de decesos de <code>Coronavirus</code> por departamento. Las cantidades indican el número diario no el acumulado.<br />
+                El cuadro muestra los últimos 20 días<br />
+                Puede hacer clic en los departamento para un mejor filtrado.
+            </p>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recuperados -->
+  <div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <figure class="highcharts-figure">
+            <div id="container_recovered"></div>
+            <p class="highcharts-description">
+                Datos de recuperados de <code>Coronavirus</code> por departamento. Las cantidades indican el número diario no el acumulado.<br />
+                El cuadro muestra los últimos 20 días<br />
+                Puede hacer clic en los departamento para un mejor filtrado.
+            </p>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Descartados -->
+  <div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <figure class="highcharts-figure">
+            <div id="container_discarded"></div>
+            <p class="highcharts-description">
+                Datos de descartados de <code>Coronavirus</code> por departamento. Las cantidades indican el número diario no el acumulado.<br />
+                El cuadro muestra los últimos 20 días<br />
+                Puede hacer clic en los departamento para un mejor filtrado.
+            </p>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript" src="/static/dark-unica.js"></script>
+<script type="text/javascript">
+  Highcharts.chart('container', {
+      title: {
+          text: 'Bolivia: datos por departamento "Casos confirmados"'
+      },
+      subtitle: {
+          text: 'Fuente: boliviasegura.agetic.gob.bo'
+      },
+      yAxis: {
+          title: {
+              text: 'Casos confirmados'
+          }
+      },
+      xAxis: {
+          accessibility: {
+              rangeDescription: 'Últimos 20 días'
+          },
+          categories: {{fechajson|safe}}
+      },
+      legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle'
+      },
+      plotOptions: {
+          series: {
+              label: {
+                  connectorAllowed: false
+              }
+          }
+      },
+      series: [
+        {% for key,item in departments.items() %}
+          {
+            name: '{{ item }}',
+            data: {{ confirmed[ key ]|safe }}
+          },  
+        {% endfor %}
+      ],
+      responsive: {
+          rules: [{
+              condition: {
+                  maxWidth: 500
+              },
+              chartOptions: {
+                  legend: {
+                      layout: 'horizontal',
+                      align: 'center',
+                      verticalAlign: 'bottom'
+                  }
+              }
+          }]
+      }
+  });
+
+
+  Highcharts.chart('container_deaths', {
+      title: {
+          text: 'Bolivia: datos por departamento "Decesos"'
+      },
+      subtitle: {
+          text: 'Fuente: boliviasegura.agetic.gob.bo'
+      },
+      yAxis: {
+          title: {
+              text: 'Decesos'
+          }
+      },
+      xAxis: {
+          accessibility: {
+              rangeDescription: 'Últimos 20 días'
+          },
+          categories: {{fechajson|safe}}
+      },
+      legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle'
+      },
+      plotOptions: {
+          series: {
+              label: {
+                  connectorAllowed: false
+              }
+          }
+      },
+      series: [
+        {% for key,item in departments.items() %}
+          {
+            name: '{{ item }}',
+            data: {{ death[ key ]|safe }}
+          },  
+        {% endfor %}
+      ],
+      responsive: {
+          rules: [{
+              condition: {
+                  maxWidth: 500
+              },
+              chartOptions: {
+                  legend: {
+                      layout: 'horizontal',
+                      align: 'center',
+                      verticalAlign: 'bottom'
+                  }
+              }
+          }]
+      }
+  });
+
+  Highcharts.chart('container_recovered', {
+      title: {
+          text: 'Bolivia: datos por departamento "Recuperados"'
+      },
+      subtitle: {
+          text: 'Fuente: boliviasegura.agetic.gob.bo'
+      },
+      yAxis: {
+          title: {
+              text: 'Recuperados'
+          }
+      },
+      xAxis: {
+          accessibility: {
+              rangeDescription: 'Últimos 20 días'
+          },
+          categories: {{fechajson|safe}}
+      },
+      legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle'
+      },
+      plotOptions: {
+          series: {
+              label: {
+                  connectorAllowed: false
+              }
+          }
+      },
+      series: [
+        {% for key,item in departments.items() %}
+          {
+            name: '{{ item }}',
+            data: {{ recovered[ key ]|safe }}
+          },  
+        {% endfor %}
+      ],
+      responsive: {
+          rules: [{
+              condition: {
+                  maxWidth: 500
+              },
+              chartOptions: {
+                  legend: {
+                      layout: 'horizontal',
+                      align: 'center',
+                      verticalAlign: 'bottom'
+                  }
+              }
+          }]
+      }
+  });
+
+
+  Highcharts.chart('container_discarded', {
+      title: {
+          text: 'Bolivia: datos por departamento "Descartados"'
+      },
+      subtitle: {
+          text: 'Fuente: boliviasegura.agetic.gob.bo'
+      },
+      yAxis: {
+          title: {
+              text: 'Descartados'
+          }
+      },
+      xAxis: {
+          accessibility: {
+              rangeDescription: 'Últimos 20 días'
+          },
+          categories: {{fechajson|safe}}
+      },
+      legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle'
+      },
+      plotOptions: {
+          series: {
+              label: {
+                  connectorAllowed: false
+              }
+          }
+      },
+      series: [
+        {% for key,item in departments.items() %}
+          {
+            name: '{{ item }}',
+            data: {{ recovered[ key ]|safe }}
+          },  
+        {% endfor %}
+      ],
+      responsive: {
+          rules: [{
+              condition: {
+                  maxWidth: 500
+              },
+              chartOptions: {
+                  legend: {
+                      layout: 'horizontal',
+                      align: 'center',
+                      verticalAlign: 'bottom'
+                  }
+              }
+          }]
+      }
+  });
+  </script>
+
+
+  <script type="text/javascript" src="/static/main.70a66962.js"></script>
+</body>
+</html>
