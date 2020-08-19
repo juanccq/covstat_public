@@ -137,3 +137,5 @@ db_settings.ini
 /static/fechas.json
 /static/recovered.json
 /static/suspects.json
+
+nohup.out
