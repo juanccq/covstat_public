@@ -7,7 +7,7 @@ import configparser
 import pathlib
 
 config = configparser.ConfigParser()
-config.read('db_settings.ini')
+config.read('/home/juan_c_c_q/covstat_public/db_settings.ini')
 
 departments = { 
     'lp': 'La Paz', 
@@ -31,7 +31,7 @@ def get_today_data():
 def save_api_data(res):
     fecha = res['fecha']
     fechaObj = datetime.datetime.strptime( res['fecha'], '%d/%m/%y %H:%M' )
-    lpath = config[ 'mysqlDB' ][ 'path' ].replace("'","")
+    lpath = '/home/juan_c_c_q/covstat_public/'
     host = config[ 'mysqlDB' ][ 'host' ].replace("'","")
     user = config[ 'mysqlDB' ][ 'user' ].replace("'","")
     passw = config[ 'mysqlDB' ][ 'pass' ].replace("'","")
