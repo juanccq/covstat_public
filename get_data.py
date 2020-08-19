@@ -6,8 +6,10 @@ import json
 import configparser
 import pathlib
 
+lpath = str( pathlib.Path().absolute() )
+
 config = configparser.ConfigParser()
-config.read('/home/juan_c_c_q/covstat_public/db_settings.ini')
+config.read( lpath + '/db_settings.ini' )
 
 departments = { 
     'lp': 'La Paz', 
@@ -31,7 +33,6 @@ def get_today_data():
 def save_api_data(res):
     fecha = res['fecha']
     fechaObj = datetime.datetime.strptime( res['fecha'], '%d/%m/%y %H:%M' )
-    lpath = '/home/juan_c_c_q/covstat_public/'
     host = config[ 'mysqlDB' ][ 'host' ].replace("'","")
     user = config[ 'mysqlDB' ][ 'user' ].replace("'","")
     passw = config[ 'mysqlDB' ][ 'pass' ].replace("'","")
@@ -71,7 +72,7 @@ def save_api_data(res):
                 if not firstDate:
                     firstDate = item['date'].strftime('%Y-%m-%d')
 
-            with open( (lpath + 'static/fechas.json'), 'w' ) as jsonfile:
+            with open( lpath + '/static/fechas.json', 'w' ) as jsonfile:
                 json.dump( fechaJson, jsonfile )
 
             sql = f"SELECT * FROM cov_data_per_day WHERE `date` >= '{firstDate}'  ORDER BY `date` ASC"
@@ -98,21 +99,22 @@ def save_api_data(res):
                         data_json_suspects[ dep ].append( item['suspects'] )
                         data_json_discarted[ dep ].append( item['discarded'] )
 
-            with open( lpath + 'static/confirmed.json', 'w' ) as jsonfile:
+            with open( lpath + '/static/confirmed.json' , 'w' ) as jsonfile:
                 json.dump( data_json_confirmed, jsonfile )
 
-            with open( lpath + 'static/death.json', 'w' ) as jsonfile:
+            with open( lpath + '/static/death.json' , 'w' ) as jsonfile:
                 json.dump( data_json_death, jsonfile )
 
-            with open( lpath + 'static/recovered.json', 'w' ) as jsonfile:
+            with open( lpath + '/static/recovered.json' , 'w' ) as jsonfile:
                 json.dump( data_json_recovered, jsonfile )
 
-            with open( lpath + 'static/suspects.json', 'w' ) as jsonfile:
+            with open( lpath + '/static/suspects.json' , 'w' ) as jsonfile:
                 json.dump( data_json_suspects, jsonfile )
 
-            with open( lpath + 'static/discarted.json', 'w' ) as jsonfile:
+            with open( lpath + '/static/discarted.json' , 'w' ) as jsonfile:
                 json.dump( data_json_discarted, jsonfile )
     finally:
         conn.close()
 
 get_today_data()
+
