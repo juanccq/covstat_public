@@ -156,3 +156,6 @@ def save_api_data(res):
                 json.dump( data_json_discarted, jsonfile )
     finally:
         conn.close()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=80)
