@@ -60,7 +60,7 @@ def save_api_data(res):
     
         # prepare data for graph
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM ( SELECT `date` FROM cov_data_per_day GROUP BY `date` ORDER BY `date` ASC LIMIT 20 ) res ORDER BY `date` ASC"
+            sql = "SELECT * FROM ( SELECT `date` FROM cov_data_per_day GROUP BY `date` ORDER BY `date` DESC LIMIT 20 ) res ORDER BY `date` ASC"
             cursor.execute(sql)
             fechas = cursor.fetchall()
             fechaJson = []
