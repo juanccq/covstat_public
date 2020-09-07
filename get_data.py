@@ -60,11 +60,12 @@ def save_api_data(res):
     
         # prepare data for graph
         with conn.cursor() as cursor:
-            sql = "SELECT `date` FROM cov_data_per_day GROUP BY `date` ORDER BY `date` ASC LIMIT 20"
+            sql = "SELECT * FROM ( SELECT `date` FROM cov_data_per_day GROUP BY `date` ORDER BY `date` ASC LIMIT 20 ) res ORDER BY `date` ASC"
             cursor.execute(sql)
             fechas = cursor.fetchall()
             fechaJson = []
             firstDate = None
+            lastDate = None
 
             for item in fechas:
                 fechaJson.append( item['date'].strftime('%d/%m/%y') )
@@ -72,10 +73,12 @@ def save_api_data(res):
                 if not firstDate:
                     firstDate = item['date'].strftime('%Y-%m-%d')
 
+                lastDate = item['date'].strftime('%y-%m-%d')
+
             with open( lpath + '/static/fechas.json', 'w' ) as jsonfile:
                 json.dump( fechaJson, jsonfile )
 
-            sql = f"SELECT * FROM cov_data_per_day WHERE `date` >= '{firstDate}'  ORDER BY `date` ASC"
+            sql = f"SELECT * FROM cov_data_per_day WHERE `date` >= '{firstDate}' AND `date` <= '{lastDate}'  ORDER BY `date` ASC"
             cursor.execute( sql )
             data = cursor.fetchall()
             data_json_confirmed = {}
